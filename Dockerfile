@@ -7,6 +7,6 @@ RUN chmod +x ./image-server-start.sh
 
 COPY . .
 
-EXPOSE 8080
+EXPOSE 8181
 
 ENTRYPOINT ["sh","./image-server-start.sh"]
