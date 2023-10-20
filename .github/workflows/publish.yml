@@ -17,7 +17,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build the iiif-image-server Docker image
         run: |
-          docker build . --file Dockerfile --tag ghcr.io/${{ github.repository }}/iiif-image-server:latest
+          docker build . --file docker/Linux-JDK11/Dockerfile --tag ghcr.io/${{ github.repository }}/iiif-image-server:latest
       - name: Push the Docker image to GitHub Container Registry
         run: |
           docker push ghcr.io/${{ github.repository }}/iiif-image-server:latest
