@@ -1,0 +1,23 @@
+#Publish iiif-image-server to github container registry
+name: publish
+on:
+  push:
+    branches: [ "develop" ]
+
+jobs:
+  publish-iiif-image-server-docker-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build the iiif-image-server Docker image
+        run: |
+          docker build . --file Dockerfile --tag ghcr.io/${{ github.repository }}/iiif-image-server:latest
+      - name: Push the Docker image to GitHub Container Registry
+        run: |
+          docker push ghcr.io/${{ github.repository }}/iiif-image-server:latest
