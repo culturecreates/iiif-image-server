@@ -1,4 +1,4 @@
-FROM openjdk:11-slim
+FROM eclipse-temurin:11-jdk-jammy
 
 WORKDIR /usr/src/app
 
