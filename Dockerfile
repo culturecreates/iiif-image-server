@@ -1,5 +1,7 @@
 FROM eclipse-temurin:11-jdk-jammy
 
+ENV JAVA_TOOL_OPTIONS="-Xms512m -Xmx2g -XX:+UseG1GC"
+
 WORKDIR /usr/src/app
 
 COPY image-server-start.sh ./image-server-start.sh
