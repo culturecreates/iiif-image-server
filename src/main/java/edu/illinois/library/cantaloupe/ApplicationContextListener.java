@@ -10,6 +10,8 @@ import edu.illinois.library.cantaloupe.logging.LoggerUtil;
 import edu.illinois.library.cantaloupe.source.Source;
 import edu.illinois.library.cantaloupe.source.SourceFactory;
 import edu.illinois.library.cantaloupe.delegate.DelegateProxyService;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.sys.JenaSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +43,8 @@ public class ApplicationContextListener implements ServletContextListener {
 
         logSystemInfo();
 
+        initJena();
+
         // Start watching configuration files.
         ConfigurationFileWatcher.startWatching();
 
@@ -52,6 +56,27 @@ public class ApplicationContextListener implements ServletContextListener {
         if (config.getBoolean(Key.CACHE_WORKER_ENABLED, false)) {
             CacheWorkerRunner.getInstance().start();
         }
+    }
+
+    /**
+     * Initializes Apache Jena eagerly, on a single thread, before any
+     * requests are served.
+     *
+     * Jena 3.x initializes itself lazily through a web of static
+     * initializers ({@link JenaSystem}, {@code ARQConstants}, {@code
+     * PrefixMapping}...) that is not safe to enter from several threads at
+     * once. If two request threads trigger it concurrently (e.g. via {@code
+     * Metadata.loadXMP()} on images with XMP metadata), they deadlock on
+     * class initialization, and every later request that touches Jena
+     * blocks forever until the web server's thread pool is exhausted.
+     * Completing the initialization here means request threads only ever
+     * see fully initialized classes.
+     */
+    private static void initJena() {
+        JenaSystem.init();
+        // Also force PrefixMapping & friends to finish initializing.
+        ModelFactory.createDefaultModel().close();
+        LOGGER.debug("initJena(): Apache Jena initialized");
     }
 
     @Override
