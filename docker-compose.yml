@@ -2,7 +2,7 @@ services:
   image-server:
     build: .
     restart: always
-    container_name: canataloupe-image-server
+    container_name: cantaloupe-image-server
     ports:
       - "80:80"
     mem_limit: 3g
