@@ -10,3 +10,9 @@ services:
       options:
         max-size: "50m"
         max-file: "5"
+    networks:
+      - footlight-cms
+
+networks:
+  footlight-cms:
+    external: true
